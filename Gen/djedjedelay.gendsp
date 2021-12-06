@@ -1,0 +1,140 @@
+{
+	"patcher" : 	{
+		"fileversion" : 1,
+		"appversion" : 		{
+			"major" : 8,
+			"minor" : 2,
+			"revision" : 0,
+			"architecture" : "x64",
+			"modernui" : 1
+		}
+,
+		"classnamespace" : "dsp.gen",
+		"rect" : [ 197.0, 79.0, 1224.0, 971.0 ],
+		"bglocked" : 0,
+		"openinpresentation" : 0,
+		"default_fontsize" : 12.0,
+		"default_fontface" : 0,
+		"default_fontname" : "Arial",
+		"gridonopen" : 1,
+		"gridsize" : [ 15.0, 15.0 ],
+		"gridsnaponopen" : 1,
+		"objectsnaponopen" : 1,
+		"statusbarvisible" : 2,
+		"toolbarvisible" : 1,
+		"lefttoolbarpinned" : 0,
+		"toptoolbarpinned" : 0,
+		"righttoolbarpinned" : 0,
+		"bottomtoolbarpinned" : 0,
+		"toolbars_unpinned_last_save" : 0,
+		"tallnewobj" : 0,
+		"boxanimatetime" : 200,
+		"enablehscroll" : 1,
+		"enablevscroll" : 1,
+		"devicewidth" : 0.0,
+		"description" : "",
+		"digest" : "",
+		"tags" : "",
+		"style" : "",
+		"subpatcher_template" : "Default Max 7",
+		"assistshowspatchername" : 0,
+		"boxes" : [ 			{
+				"box" : 				{
+					"code" : "Param mono(0, min=0, max=1, default=0);\r\n\r\nParam delay_1_min(0, min=0, max=44100, default=0);\r\nParam delay_1_max(0, min=0, max=44100, default=44100);\r\nParam delay_2_min(0, min=0, max=44100, default=0);\r\nParam delay_2_max(0, min=0, max=44100, default=44100);\r\n\r\nParam slide_1_up(0, min=0, max=44100, default=5000);\r\nParam slide_1_down(0, min=0, max=44100, default=5000);\r\nParam slide_2_up(0, min=0, max=44100, default=5000);\r\nParam slide_2_down(0, min=0, max=44100, default=5000);\r\n\r\nParam lfo_1_freq(0, min=0, max=500, default=1);\r\nParam lfo_2_freq(0, min=0, max=500, default=1);\r\n\r\nParam mix(0, min=0, max=1, default=0.5);\r\nParam feedback_1(0, min=0, max=0.9, default=0.5);\r\nParam feedback_2(0, min=0, max=0.9, default=0.5);\r\n\r\nDelay delay_1(44100);\r\nDelay delay_2(44100);\r\n\r\nlfo_1_driver = phasor(lfo_1_freq);\r\nlfo_2_driver = phasor(lfo_2_freq);\r\n\r\nis_mono = mono >= 0.5;\r\n\r\ndelay_1_time = scale(noise(), -1, 1, delay_1_min, delay_1_max);\r\ndelay_2_time = 0;\r\nsampled_delay_time_1 = 0;\r\nsampled_delay_time_2 = 0;\r\n_feedback_2 = feedback_2;\r\n\r\nif (is_mono) {\r\n\tdelay_2_time = delay_1_time;\r\n\tsampled_delay_time_2 = sah(delay_1_time, lfo_1_driver, 0.5);\r\n\t_feedback_2 = feedback_1;\r\n} else {\r\n\tdelay_2_time = scale(noise(), -1, 1, delay_2_min, delay_2_max);\r\n\tsampled_delay_time_2 = sah(delay_2_time, lfo_2_driver, 0.5);\r\n}\r\n\r\nsampled_delay_time_1 = sah(delay_1_time, lfo_1_driver, 0.5);\r\n\r\nslide_1_value = slide(sampled_delay_time_1, slide_1_up, slide_1_down);\r\nslide_2_value = slide(sampled_delay_time_2, slide_2_up, slide_2_down);\r\n\r\ntap_1 = delay_1.read(slide_1_value);\r\ntap_2 = delay_2.read(slide_2_value);\r\n\r\nout1 = mix(in1, tap_1, mix);\r\nout2 = mix(in2, tap_2, mix);\r\n\r\n\r\nfeedback_mult_1 = tap_1 * feedback_1;\r\nfeedback_mult_2 = tap_2 * _feedback_2;\r\n\r\ndelay_1.write(in1 + feedback_mult_1);\r\ndelay_2.write(in2 + feedback_mult_2);",
+					"fontface" : 0,
+					"fontname" : "<Monospaced>",
+					"fontsize" : 12.0,
+					"id" : "obj-27",
+					"maxclass" : "codebox",
+					"numinlets" : 2,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 176.0, 57.0, 766.0, 742.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-8",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 923.0, 821.0, 35.0, 22.0 ],
+					"text" : "out 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 176.0, 14.0, 28.0, 22.0 ],
+					"text" : "in 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 923.0, 14.0, 28.0, 22.0 ],
+					"text" : "in 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 176.0, 821.0, 35.0, 22.0 ],
+					"text" : "out 1"
+				}
+
+			}
+ ],
+		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-27", 0 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-27", 1 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-27", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-8", 0 ],
+					"source" : [ "obj-27", 1 ]
+				}
+
+			}
+ ],
+		"bgfillcolor_type" : "gradient",
+		"bgfillcolor_color1" : [ 0.376471, 0.384314, 0.4, 1.0 ],
+		"bgfillcolor_color2" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
+		"bgfillcolor_color" : [ 0.290196, 0.309804, 0.301961, 1.0 ],
+		"bgfillcolor_angle" : 270.0,
+		"bgfillcolor_proportion" : 0.39
+	}
+
+}
